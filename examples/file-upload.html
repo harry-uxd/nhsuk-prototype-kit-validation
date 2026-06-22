@@ -1,0 +1,54 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Upload
+  your supporting document
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {{
+          fileUpload({
+            label: {
+              text: "Upload a file",
+              size: "l",
+              isPageHeading: true
+            },
+            id: "supporting-document",
+            name: "supportingDocument",
+            errorMessage: errors.supportingDocument
+          })
+        }}
+        {{
+          applyValidation('supportingDocument', {
+            presence: {
+              allowEmpty: false,
+              message: "Choose a file to upload"
+            },
+            fileType: {
+              allowed: ["pdf", "jpg", "jpeg", "png"],
+              message: "Choose a PDF, JPG or PNG file"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

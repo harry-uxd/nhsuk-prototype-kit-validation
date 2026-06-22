@@ -1,0 +1,81 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Enter
+  the date Birmingham City won the League Cup
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {{
+          dateInput({
+            id: "league-cup-final",
+            namePrefix: "leagueCupFinal",
+            errorMessage: errors.leagueCupFinal,
+            fieldset: {
+              legend: {
+                text: "When did Birmingham City win the League Cup?",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            hint: {
+              text: "For example, 18 5 2026"
+            },
+            items: [
+              {
+                name: "day",
+                classes: "nhsuk-input--width-2",
+                value: data['leagueCupFinal']['day']
+              },
+              {
+                name: "month",
+                classes: "nhsuk-input--width-2",
+                value: data['leagueCupFinal']['month']
+              },
+              {
+                name: "year",
+                classes: "nhsuk-input--width-4",
+                value: data['leagueCupFinal']['year']
+              }
+            ]
+          })
+        }}
+
+        {{
+          applyValidation('leagueCupFinal', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter the date Birmingham City won the League Cup"
+            },
+            isValidDate: {
+              message: "Enter a real date"
+            },
+            dateGuess: {
+              target: "2011-02-27",
+              messageBefore: "The date you entered is too early",
+              messageAfter: "The date you entered is too late"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

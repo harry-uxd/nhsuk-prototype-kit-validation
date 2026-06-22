@@ -1,0 +1,122 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Enter
+  the date Birmingham City won the League Cup
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {{
+          dateInput({
+            id: "future-date",
+            namePrefix: "futureDate",
+            errorMessage: errors.futureDate,
+            fieldset: {
+              legend: {
+                text: "Enter a date in the future",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            items: [
+              {
+                name: "day",
+                classes: "nhsuk-input--width-2",
+                value: data['futureDate']['day']
+              },
+              {
+                name: "month",
+                classes: "nhsuk-input--width-2",
+                value: data['futureDate']['month']
+              },
+              {
+                name: "year",
+                classes: "nhsuk-input--width-4",
+                value: data['futureDate']['year']
+              }
+            ]
+          })
+        }}
+
+        {{
+          applyValidation('futureDate', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter a date in the future"
+            },
+            isValidDate: {
+              message: "Enter a real date"
+            },
+            isInFuture: {
+              message: "Date must be in the future"
+            }
+          })
+        }}
+
+        {{
+          dateInput({
+            id: "past-date",
+            namePrefix: "pastDate",
+            errorMessage: errors.pastDate,
+            fieldset: {
+              legend: {
+                text: "Enter a date in the past",
+                size: "l"
+              }
+            },
+            items: [
+              {
+                name: "day",
+                classes: "nhsuk-input--width-2",
+                value: data['pastDate']['day']
+              },
+              {
+                name: "month",
+                classes: "nhsuk-input--width-2",
+                value: data['pastDate']['month']
+              },
+              {
+                name: "year",
+                classes: "nhsuk-input--width-4",
+                value: data['pastDate']['year']
+              }
+            ]
+          })
+        }}
+
+        {{
+          applyValidation('pastDate', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter a date in the past"
+            },
+            isValidDate: {
+              message: "Enter a real date"
+            },
+            isInPast: {
+              message: "Date must be in the past"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

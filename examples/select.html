@@ -1,0 +1,71 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Choose your country
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <h1 class="nhsuk-heading-l">Choose your country</h1>
+
+      <form method="post">
+        {{
+          select({
+            id: "country",
+            name: "country",
+            label: {
+              text: "Country"
+            },
+            errorMessage: errors.country,
+            items: [
+              {
+                text: "Select a country",
+                value: ""
+              },
+              {
+                text: "England",
+                value: "england"
+              },
+              {
+                text: "Scotland",
+                value: "scotland"
+              },
+              {
+                text: "Wales",
+                value: "wales"
+              },
+              {
+                text: "Northern Ireland",
+                value: "northern-ireland"
+              }
+            ]
+          })
+        }}
+        {{
+          applyValidation('country', {
+            presence: {
+              allowEmpty: false,
+              message: "Select a country"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

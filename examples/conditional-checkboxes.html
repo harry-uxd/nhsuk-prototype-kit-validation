@@ -1,0 +1,132 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Choose how we can send updates
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {% set selectedUpdateMethods = data.updateMethod or [] %}
+
+        {% set updateEmailHtml %}
+          {{
+            input({
+              id: "update-email",
+              name: "updateEmail",
+              classes: "nhsuk-input--width-30",
+              label: {
+                text: "Email address"
+              },
+              errorMessage: errors.updateEmail
+            })
+          }}
+        {% endset %}
+
+        {% set updatePhoneHtml %}
+          {{
+            input({
+              id: "update-phone",
+              name: "updatePhone",
+              classes: "nhsuk-input--width-20",
+              label: {
+                text: "Phone number"
+              },
+              errorMessage: errors.updatePhone
+            })
+          }}
+        {% endset %}
+
+        {{
+          checkboxes({
+            idPrefix: "update-method",
+            name: "updateMethod",
+            errorMessage: errors.updateMethod,
+            fieldset: {
+              legend: {
+                text: "How would you like to receive updates?",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            hint: {
+              text: "Select all that apply"
+            },
+            items: [
+              {
+                value: "email",
+                text: "Email",
+                checked: "email" in selectedUpdateMethods,
+                conditional: {
+                  html: updateEmailHtml
+                }
+              },
+              {
+                value: "phone",
+                text: "Phone",
+                checked: "phone" in selectedUpdateMethods,
+                conditional: {
+                  html: updatePhoneHtml
+                }
+              },
+              {
+                value: "letter",
+                text: "Letter",
+                checked: "letter" in selectedUpdateMethods
+              }
+            ]
+          })
+        }}
+
+        {{
+          applyValidation('updateMethod', {
+            presence: {
+              allowEmpty: false,
+              message: "Select at least one contact method"
+            }
+          })
+        }}
+
+        {{
+          applyValidation('updateEmail', {
+            conditional: {
+              dependentOn: {
+                name: "updateMethod",
+                value: "email"
+              },
+              message: "Enter your email address"
+            }
+          })
+        }}
+
+        {{
+          applyValidation('updatePhone', {
+            conditional: {
+              dependentOn: {
+                name: "updateMethod",
+                value: "phone"
+              },
+              message: "Enter your phone number"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Choose how we should contact you
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {% set emailHtml %}
+          {{
+            input({
+              id: "contact-email",
+              name: "contactEmail",
+              classes: "nhsuk-input--width-30",
+              label: {
+                text: "Email address"
+              },
+              errorMessage: errors.contactEmail
+            })
+          }}
+        {% endset %}
+
+        {% set phoneHtml %}
+          {{
+            input({
+              id: "contact-phone",
+              name: "contactPhone",
+              classes: "nhsuk-input--width-20",
+              label: {
+                text: "Phone number"
+              },
+              errorMessage: errors.contactPhone
+            })
+          }}
+        {% endset %}
+
+        {{
+          radios({
+            idPrefix: "contact-method",
+            name: "contactMethod",
+            errorMessage: errors.contactMethod,
+            fieldset: {
+              legend: {
+                text: "How would you prefer to be contacted?",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            hint: {
+              text: "Select one option"
+            },
+            items: [
+              {
+                value: "email",
+                text: "Email",
+                checked: data.contactMethod == "email",
+                conditional: {
+                  html: emailHtml
+                }
+              },
+              {
+                value: "phone",
+                text: "Phone",
+                checked: data.contactMethod == "phone",
+                conditional: {
+                  html: phoneHtml
+                }
+              },
+              {
+                value: "letter",
+                text: "Letter",
+                checked: data.contactMethod == "letter"
+              }
+            ]
+          })
+        }}
+
+        {{
+          applyValidation('contactMethod', {
+            presence: {
+              allowEmpty: false,
+              message: "Select a contact method"
+            }
+          })
+        }}
+
+        {{
+          applyValidation('contactEmail', {
+            conditional: {
+              dependentOn: {
+                name: "contactMethod",
+                value: "email"
+              },
+              message: "Enter your email address"
+            }
+          })
+        }}
+
+        {{
+          applyValidation('contactPhone', {
+            conditional: {
+              dependentOn: {
+                name: "contactMethod",
+                value: "phone"
+              },
+              message: "Enter your phone number"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

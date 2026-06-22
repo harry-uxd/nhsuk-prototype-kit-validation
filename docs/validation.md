@@ -1,0 +1,377 @@
+# Adding Form Validation
+
+We have set up a custom validation engine in the prototype kit. It allows you to declare validation rules directly inside your Nunjucks views, right next to the inputs they apply to.
+
+You don't need to write complex server routing to use this. When a user submits the form, the prototype automatically checks your rules. If the user's input fails validation, the kit automatically reloads the page and injects the correct NHS error styling and summary.
+
+## Security note (important)
+
+This validation approach is designed for prototype use.
+
+`applyValidation()` writes rules into hidden inputs (`_validationRules[...]`) and those rules are posted back by the browser. Because these values come from the client, a user can remove or modify them before submission.
+
+That means this mechanism is useful for UX validation behaviour in prototypes, but it must not be treated as trusted security validation in production.
+
+## Validation debug logging (on/off)
+
+Validation debug logging is disabled by default and only turns on when you explicitly enable one of these flags.
+
+Enable globally (recommended for local debugging):
+
+```bash
+VALIDATION_DEBUG=true npm run start
+```
+
+Enable per request via query string:
+
+```text
+?validationDebug=true
+```
+
+Enable via form body:
+
+```html
+<input type="hidden" name="_validationDebug" value="true">
+```
+
+Enable for the whole session:
+
+```javascript
+req.session.data._validationDebug = true
+```
+
+Turn off:
+
+* Remove/unset `VALIDATION_DEBUG`
+* Remove `validationDebug` from the URL
+* Remove `_validationDebug` from the form/session
+
+Accepted truthy values are: `true`, `1`, `yes`, `on`.
+
+## Step-by-step instructions
+
+To add validation to any page, follow these 4 steps:
+
+### 1. Update the page title
+Make sure the browser `<title>` updates when there is an error to meet accessibility guidelines. Add an `if` statement to your `pageTitle` block:
+`{% if errorList %}Error: {% endif %} Your page title`
+
+### 2. Add the Error Summary
+Add the NHS Error Summary component at the top of your `content` block. Wrap it in an `if` statement so it only appears when errors actually exist:
+```html
+{% if errorList %}
+  {{ errorSummary({
+    titleText: "There is a problem",
+    errorList: errorList
+  }) }}
+{% endif %}
+
+```
+
+### 3. Connect your input to the error message
+
+Inside your input component (like `input`, `radios`, etc.), add the `errorMessage` property and link it to the name of your field. For example, if your input name is `currentPassword`, you would add:
+`errorMessage: errors.currentPassword`
+
+### 4. Apply your validation rules
+
+Place the `applyValidation()` macro directly beneath your input. Pass it the name of your field, and a list of rules you want to enforce.
+
+---
+
+## Full Example
+
+Here is a complete, working example of a page with validation applied:
+
+```html
+{% extends 'layouts/settings.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Enter
+  your current password
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <span class="nhsuk-caption-l">Change password</span>
+      <h1 class="nhsuk-heading-l">Enter your current password</h1>
+
+      <form method="post">
+        {{
+          passwordInput({
+              label: {
+                text: "Current password"
+              },
+              id: "current-password",
+              name: "currentPassword",
+              errorMessage: errors.currentPassword
+          })
+        }}
+        
+        {{
+          applyValidation('currentPassword', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter your current password"
+            },
+            length: {
+              minimum: 2,
+              message: "Password must be at least 2 characters" 
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+      <a href="../login-details" class="nhsuk-link">I do not want to change my password</a>
+    </div>
+  </div>
+{% endblock %}
+
+```
+
+---
+
+## Available Validation Rules
+
+You can combine different rules to make sure the user enters exactly what you need. Here are the core rules you can use inside the `applyValidation` macro:
+
+### `presence`
+
+Use this to make a field mandatory. It ensures the user doesn't leave the field completely blank or skip the question.
+
+For `select`/dropdown fields, make sure the first (default) option has an empty `value` (for example `value: ""`). If the default option has a non-empty value, the field will be treated as filled in and can incorrectly pass validation.
+
+* **`allowEmpty`** (true/false): Set this to `false` to ensure they actually type text (this prevents them from cheating the validation by just hitting the spacebar).
+* **`message`**: The error text shown to the user if they leave it blank (e.g., "Enter your current password").
+
+**Example:**
+
+```javascript
+presence: { 
+  allowEmpty: false, 
+  message: "Enter your current password" 
+}
+
+```
+
+### `length`
+
+Use this to enforce a character limit on text inputs. This is useful for things like passwords, National Insurance numbers, or reference codes.
+
+* **`minimum`** (number): The minimum number of characters allowed.
+* **`maximum`** (number): The maximum number of characters allowed.
+* **`is`** (number): The exact number of characters required (useful for things like a 6-digit security code).
+* **`message`**: The error text shown if the length is wrong (e.g., "Password must be at least 2 characters").
+
+**Example:**
+
+```javascript
+length: { 
+  minimum: 8, 
+  maximum: 20,
+  message: "Password must be between 8 and 20 characters" 
+}
+```
+
+### `email`
+
+Use this to validate email format.
+
+* **`message`**: The error text shown when the email format is invalid.
+
+**Example:**
+
+```javascript
+email: {
+  message: "Enter an email address in the correct format, like name@example.com"
+}
+```
+
+### `fileType`
+
+Use this with file uploads to enforce allowed file extensions.
+
+* **`allowed`** (array): List of allowed extensions, for example `['pdf', 'jpg', 'jpeg', 'png']`.
+* **`message`**: The error text shown when the selected file extension is not allowed.
+
+**Example:**
+
+```javascript
+fileType: {
+  allowed: ["pdf", "jpg", "jpeg", "png"],
+  message: "Choose a PDF, JPG or PNG file"
+}
+```
+
+Note: This prototype only checks the submitted filename extension string, not the actual file contents or type.
+
+### `isValidDate`
+
+Use this for the standard NHS 3-box date input (day, month, year). It checks that the user has filled in all three boxes and that the numbers form a real calendar date.
+
+* **`message`**: The error text shown if the date is incomplete or invalid.
+
+**Example:**
+
+```javascript
+isValidDate: { 
+  message: "Enter a valid date of birth" 
+}
+
+```
+
+`validDate` and `customDate` are still supported as aliases for backwards compatibility.
+
+*(Note: If you want to force the user to enter a date, use this alongside the `presence` rule!)*
+
+### `isInPast`
+
+Use this with date inputs when the value must be before today.
+
+* **`message`**: The error text shown if the date is today or in the future.
+
+**Example:**
+
+```javascript
+isInPast: {
+  message: "Date must be in the past"
+}
+```
+
+### `isInFuture`
+
+Use this with date inputs when the value must be after today.
+
+* **`message`**: The error text shown if the date is today or in the past.
+
+**Example:**
+
+```javascript
+isInFuture: {
+  message: "Date must be in the future"
+}
+```
+
+### `dateGuess`
+
+Use this with date inputs when you need to compare the entered date to a specific target date and show different messages before/after that date.
+
+* **`target`**: The date to compare against (for example `"2005-05-25"`).
+* **`messageBefore`**: Error message when the entered date is before the target.
+* **`messageAfter`**: Error message when the entered date is after the target.
+
+**Example:**
+
+```javascript
+dateGuess: {
+  target: "2005-05-25",
+  messageBefore: "That date is too early",
+  messageAfter: "That date is too late"
+}
+```
+
+### `conditional`
+
+Use this for inputs that are hidden inside a radio button or checkbox reveal (e.g., selecting "Email" reveals an input for "Email address"). It checks if the parent option was selected and ensures the revealed input isn't empty.
+
+* **`dependentOn`**: An object containing the `name` (the ID/name of the parent radio group) and `value` (the specific option they selected).
+* **`message`**: The error text shown if the revealed input is empty.
+
+To validate conditional inputs properly, you usually need both:
+
+* `presence` on the parent radios/checkboxes question (for example, "Select a contact method")
+* `conditional` on each revealed child input (for example, "Enter your email address")
+
+The `conditional` validator takes 3 options:
+
+* `dependentOn.name` - the name of the parent radios/checkboxes field
+* `dependentOn.value` - the option value that reveals this input
+* `message` - the error message when the revealed input is empty
+
+**Example:**
+
+```javascript
+conditional: {
+  dependentOn: { 
+    name: "contactMethod", 
+    value: "email" 
+  },
+  message: "Enter your email address"
+}
+```
+
+### Conditional inputs example pages
+
+Use these example pages in the prototype:
+
+* `/validation/conditional-radios`
+* `/validation/conditional-checkboxes`
+
+### Persisting selected state for conditional options
+
+When re-rendering a page after validation errors, keep the parent radio/checkbox option selected so the conditional input stays visible with its error message.
+
+For checkboxes, define selected values once and reuse them in each item:
+
+```nunjucks
+{% set selectedUpdateMethods = data.updateMethod or [] %}
+```
+
+Then set each item's `checked` value using that variable:
+
+```javascript
+checked: "email" in selectedUpdateMethods
+```
+
+The `or []` fallback is important. It prevents template errors when no value has been posted yet and allows safe checks on first page load.
+
+For radios, use the same idea with equality checks, for example:
+
+```javascript
+checked: data.contactMethod == "email"
+```
+
+## Current field coverage in this prototype
+
+This is the current set of validation example fields and validators used in `app/views/validation`:
+
+* `currentPassword`: `presence`, `length`, `inclusion`
+* `newPassword`: `presence`, `length`
+* `newPasswordConfirm`: `presence`
+* `email`: `presence`, `email`
+* `symptoms` (textarea): `presence`, `length`
+* `country` (select): `presence`
+* `contactMethod` (radios): `presence`
+* `notificationPreferences` (checkboxes): `presence`
+* `futureDate`: `presence`, `isValidDate`, `isInFuture`
+* `pastDate`: `presence`, `isValidDate`, `isInPast`
+* `leagueCupFinal`: `presence`, `isValidDate`, `dateGuess`
+* `supportingDocument` (file upload): `presence`, `fileType`
+* `contactMethod` (conditional radios parent): `presence`
+* `contactEmail` (conditional radios reveal): `conditional`
+* `contactPhone` (conditional radios reveal): `conditional`
+* `updateMethod` (conditional checkboxes parent): `presence`
+* `updateEmail` (conditional checkboxes reveal): `conditional`
+* `updatePhone` (conditional checkboxes reveal): `conditional`
+
+## Validators available
+
+The validation engine supports:
+
+* Validate.js built-in validators (for example `presence`, `length`, `email`, `type`, `inclusion`, `exclusion`, `format`, `numericality`, `equality`)
+* Custom validators in this prototype: `conditional`, `isValidDate` (plus aliases `validDate` and `customDate`), `isInPast`, `isInFuture`, `dateGuess`, `fileType`

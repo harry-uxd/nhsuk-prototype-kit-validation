@@ -1,0 +1,32 @@
+{
+  "name": "nhs-prototype-validation",
+  "version": "0.1.0",
+  "description": "Validation engine for NHS prototype kit apps. Declarative rules, custom validators, NHS-shaped error output.",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "macros",
+    "examples",
+    "docs",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js",
+    "start": "node .",
+    "watch": "echo 'run this instead: npm start'"
+  },
+  "keywords": ["nhs", "prototype", "validation", "nunjucks", "express", "nhsuk"],
+  "license": "MIT",
+  "dependencies": {
+    "validate.js": "^0.13.1"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
+  },
+  "devDependencies": {
+    "nhsuk-frontend": "^10.5.1",
+    "nhsuk-prototype-kit": "^8.3.0"
+  }
+}

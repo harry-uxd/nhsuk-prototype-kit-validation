@@ -1,0 +1,54 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Enter
+  your email
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <h1 class="nhsuk-heading-l">Enter your email</h1>
+
+      <form method="post">
+        {{
+          input({
+              label: {
+                text: "Email"
+              },
+              id: "email",
+              name: "email",
+              value: data['email'],
+              errorMessage: errors.email
+          })
+        }}
+        {{
+          applyValidation('email', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter your email"
+            },
+            email: {
+              message: "Enter an email address in the correct format, like name@example.com"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

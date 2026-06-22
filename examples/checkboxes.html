@@ -1,0 +1,65 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Choose your notification preferences
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {{
+          checkboxes({
+            idPrefix: "notification-preferences",
+            name: "notificationPreferences",
+            errorMessage: errors.notificationPreferences,
+            fieldset: {
+              legend: {
+                text: "Choose your notification preferences?",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            items: [
+              {
+                value: "appointments",
+                text: "Appointments"
+              },
+              {
+                value: "prescriptions",
+                text: "Prescriptions"
+              },
+              {
+                value: "test-results",
+                text: "Test results"
+              }
+            ]
+          })
+        }}
+        {{
+          applyValidation('notificationPreferences', {
+            presence: {
+              allowEmpty: false,
+              message: "Select at least one notification preference"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

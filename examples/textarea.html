@@ -1,0 +1,57 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Describe your symptoms
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <h1 class="nhsuk-heading-l">Describe your symptoms</h1>
+
+      <form method="post">
+        {{
+          textarea({
+            id: "symptoms",
+            name: "symptoms",
+            label: {
+              text: "Tell us what symptoms you are experiencing"
+            },
+            hint: {
+              text: "Do not include personal details"
+            },
+            value: data['symptoms'],
+            errorMessage: errors.symptoms
+          })
+        }}
+        {{
+          applyValidation('symptoms', {
+            presence: {
+              allowEmpty: false,
+              message: "Enter your symptoms"
+            },
+            length: {
+              minimum: 10,
+              message: "Symptoms must be 10 characters or more"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'layouts/main.html' %}
+
+{% block pageTitle %}
+  {% if errorList %}Error: {% endif %}Choose your contact method
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      {% if errorList %}
+        {{
+          errorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+          })
+        }}
+      {% endif %}
+
+      <form method="post">
+        {{
+          radios({
+            idPrefix: "contact-method",
+            name: "contactMethod",
+            errorMessage: errors.contactMethod,
+            fieldset: {
+              legend: {
+                text: "How would you like to receive updates?",
+                size: "l",
+                isPageHeading: true
+              }
+            },
+            items: [
+              {
+                value: "email",
+                text: "Email"
+              },
+              {
+                value: "text",
+                text: "Text message"
+              },
+              {
+                value: "phone",
+                text: "Phone call"
+              }
+            ]
+          })
+        }}
+        {{
+          applyValidation('contactMethod', {
+            presence: {
+              allowEmpty: false,
+              message: "Select a contact method"
+            }
+          })
+        }}
+
+        {{
+          button({
+            text: "Continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
