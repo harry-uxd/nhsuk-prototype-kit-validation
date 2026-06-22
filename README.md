@@ -1,24 +1,27 @@
 # nhsuk-prototype-kit-validation
 
-Validation engine for NHS prototype kit apps. Declarative rules, custom validators, NHS-shaped error output.
+Validation engine for NHS prototype kit apps.
 
-Define validation rules directly in your Nunjucks templates — no custom routes or server logic needed. When a form is submitted, the middleware checks the rules, and if validation fails it re-renders the page with the correct NHS error summary and inline error messages.
+Define validation rules directly in your Nunjucks templates. No custom routes or server logic needed. When a form is submitted, the middleware checks the rules, and if validation fails it re-renders the page with the NHS error summary and inline error messages.
 
 ---
 
 ## Install
 
+### Step 1
+
+Open a terminal window in your prototype folder and run:
+
 ```bash
 npm install nhsuk-prototype-kit-validation
 ```
 
-`npm install` automatically copies the macro to your project:
+`npm install` automatically copies the macro to your project: `app/views/macros/validation.njk`
 
-- ✓ Copies the macro to `app/views/macros/validation.njk`
+### Step 2
 
-Then wire it up manually:
-
-**`app/routes.js`** — add before `module.exports = router`:
+Add the following 2 lines to your `app/routes.js` 
+**Note:** Must be before the line that contains: `module.exports = router`
 
 ```js
 const { createValidationMiddleware } = require('nhsuk-prototype-kit-validation');
@@ -26,10 +29,18 @@ const { createValidationMiddleware } = require('nhsuk-prototype-kit-validation')
 router.use(createValidationMiddleware());
 ```
 
-**`app/views/layouts.html`** — add with your other macro imports:
+### Step 3
+
+Import the validation macro into your layout file, usually:
+**`app/views/layouts.html`** 
 
 ```njk
 {% from "macros/validation.njk" import applyValidation %}
+```
+This shares the macro with any page that uses the layout with:
+
+```njk
+{% extends 'layout.html' %}
 ```
 
 ---
