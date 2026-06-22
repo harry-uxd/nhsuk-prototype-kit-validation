@@ -71,7 +71,7 @@ router.use(createValidationMiddleware({
 Add `applyValidation()` directly beneath any input that needs validation. Pass it the field name and a rules object.
 
 ```njk
-{% extends 'layouts/main.html' %}
+{% extends 'layouts.html' %}
 
 {% block pageTitle %}
   {% if errorList %}Error: {% endif %}Enter your email

@@ -32,7 +32,7 @@ Next, wire it up manually:
     const { createValidationMiddleware } = require('nhs-prototype-validation');
     router.use(createValidationMiddleware());
 
-  app/views/layouts/main.html — add with your other macro imports:
+  app/views/layouts.html — add with your other macro imports:
 
     {% from "macros/validation.njk" import applyValidation %}
 
