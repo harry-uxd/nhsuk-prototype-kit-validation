@@ -43,20 +43,35 @@ router.use(createValidationMiddleware({
 }));
 ```
 
-### 2. Import the macro in your layout
+### 2. Make the macro available
 
-In `app/views/layouts/main.html` (or your base layout), add:
+The `applyValidation` macro needs to be on the Nunjucks search path. There are two ways to do this:
 
-```njk
-{% from "../../node_modules/nhs-prototype-validation/macros/validation.njk" import applyValidation %}
-```
-
-Or using `macroPath` from the package:
+**Option A — Add the package to `viewsPath` in `app.js`** (recommended, no file copying):
 
 ```js
-// In your app config / Nunjucks setup
-const { macroPath } = require('nhs-prototype-validation');
-// macroPath points to the validation.njk macro file
+const viewsPath = [
+  'app/views/',
+  'node_modules/nhs-prototype-validation/',
+]
+```
+
+Then in your layout (`app/views/layouts/main.html`):
+
+```njk
+{% from "macros/validation.njk" import applyValidation %}
+```
+
+**Option B — Copy the macro into your views folder** (simpler if you don't want to touch `app.js`):
+
+```bash
+cp node_modules/nhs-prototype-validation/macros/validation.njk app/views/macros/validation.njk
+```
+
+Then in your layout (`app/views/layouts/main.html`):
+
+```njk
+{% from "macros/validation.njk" import applyValidation %}
 ```
 
 ---
