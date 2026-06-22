@@ -12,19 +12,13 @@ Define validation rules directly in your Nunjucks templates — no custom routes
 npm install nhs-prototype-validation
 ```
 
-The post-install script will prompt you to optionally copy example pages and docs into your prototype. If the prompts don't appear (some npm setups suppress them), run the script manually:
+`npm install` automatically copies the macro to your project:
 
-```bash
-node node_modules/nhs-prototype-validation/scripts/postinstall.js
-```
+- ✓ Copies the macro to `app/views/macros/validation.njk`
 
----
+Then wire it up manually:
 
-## Wiring
-
-### 1. Add the middleware to your routes
-
-In `app/routes.js`, import and register the middleware **before** `module.exports = router`:
+**`app/routes.js`** — add before `module.exports = router`:
 
 ```js
 const { createValidationMiddleware } = require('nhs-prototype-validation');
@@ -32,9 +26,32 @@ const { createValidationMiddleware } = require('nhs-prototype-validation');
 router.use(createValidationMiddleware());
 ```
 
+**`app/views/layouts.html`** — add with your other macro imports:
+
+```njk
+{% from "macros/validation.njk" import applyValidation %}
+```
+
+---
+
+## Optional: examples and docs
+
+To add example pages and documentation to your prototype, run:
+
+```bash
+node node_modules/nhs-prototype-validation/scripts/setup.js
+```
+
+This will prompt you:
+
+```
+Copy example validation pages to app/views/validation/? (y/N)
+Copy validation docs to docs/validation.md? (y/N)
+```
+
 #### Custom render callback (optional)
 
-By default, the middleware derives the view path from `req.path` and calls `res.render`. If your prototype uses a different view path strategy, pass a custom `render` function:
+By default, the middleware derives the view path from `req.path` and calls `res.render`. Override it if your prototype uses a different strategy:
 
 ```js
 router.use(createValidationMiddleware({
@@ -45,37 +62,6 @@ router.use(createValidationMiddleware({
     });
   }
 }));
-```
-
-### 2. Make the macro available
-
-The `applyValidation` macro needs to be on the Nunjucks search path. There are two ways to do this:
-
-**Option A — Add the package to `viewsPath` in `app.js`** (recommended, no file copying):
-
-```js
-const viewsPath = [
-  'app/views/',
-  'node_modules/nhs-prototype-validation/',
-]
-```
-
-Then in your layout (`app/views/layouts/main.html`):
-
-```njk
-{% from "macros/validation.njk" import applyValidation %}
-```
-
-**Option B — Copy the macro into your views folder** (simpler if you don't want to touch `app.js`):
-
-```bash
-cp node_modules/nhs-prototype-validation/macros/validation.njk app/views/macros/validation.njk
-```
-
-Then in your layout (`app/views/layouts/main.html`):
-
-```njk
-{% from "macros/validation.njk" import applyValidation %}
 ```
 
 ---
@@ -344,7 +330,7 @@ The middleware automatically strips `_validationRules` and `_validationDebug` fr
 
 ## Example pages
 
-The `examples/` directory contains 12 working form pages covering every built-in validator. Run the post-install script (or copy them manually) to add them to your prototype under `app/views/validation/`:
+The `examples/` directory contains 12 working form pages covering every built-in validator. Run the setup script to add them to your prototype under `app/views/validation/`:
 
 | Page | Validators demonstrated |
 |------|------------------------|
