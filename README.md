@@ -1,4 +1,4 @@
-# nhs-prototype-validation
+# nhsuk-prototype-kit-validation
 
 Validation engine for NHS prototype kit apps. Declarative rules, custom validators, NHS-shaped error output.
 
@@ -9,7 +9,7 @@ Define validation rules directly in your Nunjucks templates — no custom routes
 ## Install
 
 ```bash
-npm install nhs-prototype-validation
+npm install nhsuk-prototype-kit-validation
 ```
 
 `npm install` automatically copies the macro to your project:
@@ -21,7 +21,7 @@ Then wire it up manually:
 **`app/routes.js`** — add before `module.exports = router`:
 
 ```js
-const { createValidationMiddleware } = require('nhs-prototype-validation');
+const { createValidationMiddleware } = require('nhsuk-prototype-kit-validation');
 
 router.use(createValidationMiddleware());
 ```
@@ -39,7 +39,7 @@ router.use(createValidationMiddleware());
 To add example pages and documentation to your prototype, run:
 
 ```bash
-node node_modules/nhs-prototype-validation/scripts/setup.js
+node node_modules/nhsuk-prototype-kit-validation/scripts/setup.js
 ```
 
 This will prompt you:

@@ -4,7 +4,7 @@
 // Optional extras script — run from your prototype project root to add
 // example pages and/or documentation to your project:
 //
-//   node node_modules/nhs-prototype-validation/scripts/setup.js
+//   node node_modules/nhsuk-prototype-kit-validation/scripts/setup.js
 
 const fs = require("fs");
 const path = require("path");
@@ -48,7 +48,7 @@ async function copyWithOverwriteGuard(src, dest, label) {
 }
 
 async function run() {
-  console.log("\nnhs-prototype-validation — optional extras\n");
+  console.log("\nnhsuk-prototype-kit-validation — optional extras\n");
 
   // Example pages
   const examplesAnswer = await ask("Copy example validation pages to app/views/validation/? (y/N) ");

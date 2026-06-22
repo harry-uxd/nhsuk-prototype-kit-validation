@@ -1,5 +1,5 @@
 {
-  "name": "nhs-prototype-validation",
+  "name": "nhsuk-prototype-kit-validation",
   "version": "0.1.0",
   "description": "Validation engine for NHS prototype kit apps. Declarative rules, custom validators, NHS-shaped error output.",
   "main": "src/index.js",

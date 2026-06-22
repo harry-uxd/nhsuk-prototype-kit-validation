@@ -22,14 +22,14 @@ function copyMacro() {
   log("✓ Macro copied to app/views/macros/validation.njk");
 }
 
-log("\nnhs-prototype-validation\n");
+log("\nnhsuk-prototype-kit-validation\n");
 copyMacro();
 log(`
 Next, wire it up manually:
 
   app/routes.js — add before module.exports:
 
-    const { createValidationMiddleware } = require('nhs-prototype-validation');
+    const { createValidationMiddleware } = require('nhsuk-prototype-kit-validation');
     router.use(createValidationMiddleware());
 
   app/views/layouts.html — add with your other macro imports:
@@ -38,6 +38,6 @@ Next, wire it up manually:
 
 To add example pages and docs, run:
 
-  node node_modules/nhs-prototype-validation/scripts/setup.js
+  node node_modules/nhsuk-prototype-kit-validation/scripts/setup.js
 `);
 
