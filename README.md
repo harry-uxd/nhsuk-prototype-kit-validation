@@ -12,7 +12,11 @@ Define validation rules directly in your Nunjucks templates — no custom routes
 npm install nhs-prototype-validation
 ```
 
-The post-install script will optionally copy example pages and docs into your prototype.
+The post-install script will prompt you to optionally copy example pages and docs into your prototype. If the prompts don't appear (some npm setups suppress them), run the script manually:
+
+```bash
+node node_modules/nhs-prototype-validation/scripts/postinstall.js
+```
 
 ---
 

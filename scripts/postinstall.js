@@ -5,8 +5,10 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 
-// Only run in interactive terminals
-if (!process.stdout.isTTY) process.exit(0);
+// Only run in interactive terminals — npm can suppress isTTY even in a real terminal,
+// so we check both stdin and stdout. Users can also run this manually:
+//   node node_modules/nhs-prototype-validation/scripts/postinstall.js
+if (!process.stdin.isTTY && !process.stdout.isTTY) process.exit(0);
 
 const PKG_ROOT = path.join(__dirname, "..");
 const CWD = process.cwd();
