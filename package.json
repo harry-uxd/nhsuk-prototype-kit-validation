@@ -2,7 +2,30 @@
   "name": "nhsuk-prototype-kit-validation",
   "version": "0.1.0",
   "description": "Validation engine for NHS prototype kit apps. Declarative rules, custom validators, NHS-shaped error output.",
+  "keywords": [
+    "nhs",
+    "prototype",
+    "validation",
+    "nunjucks",
+    "express",
+    "nhsuk"
+  ],
+  "homepage": "https://github.com/harry-uxd/nhsuk-prototype-kit-validation#readme",
+  "bugs": {
+    "url": "https://github.com/harry-uxd/nhsuk-prototype-kit-validation/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harry-uxd/nhsuk-prototype-kit-validation.git"
+  },
+  "license": "MIT",
+  "author": "harry-uxd",
+  "type": "commonjs",
   "main": "src/index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
+  },
   "files": [
     "src",
     "macros",
@@ -17,16 +40,14 @@
     "start": "node .",
     "watch": "echo 'run this instead: npm start'"
   },
-  "keywords": ["nhs", "prototype", "validation", "nunjucks", "express", "nhsuk"],
-  "license": "MIT",
   "dependencies": {
     "validate.js": "^0.13.1"
-  },
-  "peerDependencies": {
-    "express": ">=4.0.0"
   },
   "devDependencies": {
     "nhsuk-frontend": "^10.5.1",
     "nhsuk-prototype-kit": "^8.3.0"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
   }
 }
