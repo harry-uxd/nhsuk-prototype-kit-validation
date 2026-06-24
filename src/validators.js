@@ -221,11 +221,22 @@ validate.validators.dateGuess = function (value, options, key, attributes) {
 validate.validators.doesNotContain = function (value, options) {
   if (validate.isEmpty(value)) return null;
 
-  const substring = typeof options === "string" ? options : options.string;
-  if (!substring) return null;
+  const substringRaw =
+    typeof options === "string"
+      ? options
+      : options && typeof options === "object"
+        ? options.string
+        : null;
 
-  if (`${value}`.includes(substring)) {
-    return options.message || `^Must not contain "${substring}"`;
+  const substring = `${substringRaw || ""}`.trim();
+  if (substring === "") return null;
+
+  const valueStr = `${value}`.toLowerCase();
+  const substringStr = substring.toLowerCase();
+
+  if (valueStr.includes(substringStr)) {
+    const message = options && typeof options === "object" ? options.message : null;
+    return message || `Must not contain "${substring}"`;
   }
 
   return null;
