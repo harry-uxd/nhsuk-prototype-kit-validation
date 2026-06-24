@@ -220,6 +220,22 @@ fileType: {
 
 Note: This prototype only checks the submitted filename extension string, not the actual file contents or type.
 
+### `doesNotContain`
+
+Use this to block input that contains a specific substring — for example, to prevent test or placeholder values from being submitted.
+
+* **`string`**: The substring that must not appear in the value.
+* **`message`**: The error text shown when the substring is found.
+
+**Example:**
+
+```javascript
+doesNotContain: {
+  string: "test",
+  message: "^Enter a real email address"
+}
+```
+
 ### `isValidDate`
 
 Use this for the standard NHS 3-box date input (day, month, year). It checks that the user has filled in all three boxes and that the numbers form a real calendar date.
@@ -374,4 +390,4 @@ This is the current set of validation example fields and validators used in `app
 The validation engine supports:
 
 * Validate.js built-in validators (for example `presence`, `length`, `email`, `type`, `inclusion`, `exclusion`, `format`, `numericality`, `equality`)
-* Custom validators in this prototype: `conditional`, `isValidDate` (plus aliases `validDate` and `customDate`), `isInPast`, `isInFuture`, `dateGuess`, `fileType`
+* Custom validators in this prototype: `conditional`, `isValidDate` (plus aliases `validDate` and `customDate`), `isInPast`, `isInFuture`, `dateGuess`, `fileType`, `doesNotContain`
