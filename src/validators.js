@@ -217,7 +217,21 @@ validate.validators.dateGuess = function (value, options, key, attributes) {
   return null;
 };
 
-// 6. File Type Validator (by extension only — does not check MIME type or file contents)
+// 6. Does Not Contain Validator
+validate.validators.doesNotContain = function (value, options) {
+  if (validate.isEmpty(value)) return null;
+
+  const substring = typeof options === "string" ? options : options.string;
+  if (!substring) return null;
+
+  if (`${value}`.includes(substring)) {
+    return options.message || `^Must not contain "${substring}"`;
+  }
+
+  return null;
+};
+
+// 7. File Type Validator (by extension only — does not check MIME type or file contents)
 validate.validators.fileType = function (value, options) {
   if (validate.isEmpty(value)) return null;
 
