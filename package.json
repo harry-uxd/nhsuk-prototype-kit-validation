@@ -38,6 +38,7 @@
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
     "start": "node .",
+    "test": "node --test test/middleware.test.js",
     "watch": "echo 'run this instead: npm start'"
   },
   "dependencies": {

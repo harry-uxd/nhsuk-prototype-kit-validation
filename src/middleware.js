@@ -8,6 +8,8 @@ const {
 } = require("./validators");
 
 function createValidationMiddleware(options = {}) {
+  const useRedirect = options.redirect === true;
+
   const renderFn = options.render || function defaultRender(req, res, formattedErrors) {
     const viewPath = req.path.substring(1);
     return res.render(viewPath, {
@@ -16,8 +18,32 @@ function createValidationMiddleware(options = {}) {
     });
   };
 
+  function handleFailure(req, res, formattedErrors) {
+    if (useRedirect) {
+      req.session._validationErrors = {
+        errors: formattedErrors.errors,
+        errorList: formattedErrors.errorSummary,
+      };
+      const redirectTo = req.get("Referer") || req.path;
+      debugValidation(req, "Redirecting back with flash errors", { redirectTo });
+      return res.redirect(redirectTo);
+    }
+    return renderFn(req, res, formattedErrors);
+  }
+
   return function validationEngine(req, res, next) {
     if (req.method !== "POST") {
+      // Flash-reader: pick up any errors stored by a previous redirect and expose them
+      // to the template via res.locals so custom GET routes can supply their own data too.
+      if (useRedirect && req.session && req.session._validationErrors) {
+        const flash = req.session._validationErrors;
+        delete req.session._validationErrors;
+        res.locals.errors = flash.errors;
+        res.locals.errorList = flash.errorList;
+        debugValidation(req, "Restored validation errors from session flash", {
+          errorKeys: flash.errors ? Object.keys(flash.errors) : [],
+        });
+      }
       debugValidation(req, "Skipping validation middleware for non-POST request", {
         method: req.method,
         path: req.path,
@@ -164,7 +190,7 @@ function createValidationMiddleware(options = {}) {
       const formattedErrors = formatErrors(validationErrors);
       debugValidation(req, "Formatted validation errors", formattedErrors);
 
-      return renderFn(req, res, formattedErrors);
+      return handleFailure(req, res, formattedErrors);
     }
 
     // VALIDATION PASSED — clean up rules from session/body then hand off to next middleware.
