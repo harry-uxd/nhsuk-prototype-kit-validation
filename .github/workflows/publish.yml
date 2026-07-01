@@ -1,0 +1,39 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write  # Required for OIDC trusted publisher authentication
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - run: npm ci --ignore-scripts
+
+      - run: npm test
+
+      # Beta tags (e.g. v0.3.0-beta.0) → publish immediately under the "beta" dist-tag.
+      # Users still get 0.2.0 with `npm install nhsuk-prototype-kit-validation`;
+      # testers opt in with `npm install nhsuk-prototype-kit-validation@beta`.
+      - name: Publish pre-release (beta dist-tag)
+        if: contains(github.ref_name, '-')
+        run: npm publish --tag beta --provenance --access public
+
+      # Full release tags (e.g. v0.3.0) → stage the package.
+      # A maintainer must review and 2FA-approve it on npmjs.com before it goes live.
+      - name: Stage full release (requires 2FA approval on npmjs.com)
+        if: "!contains(github.ref_name, '-')"
+        run: npm stage publish
