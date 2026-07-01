@@ -10,13 +10,13 @@
     "express",
     "nhsuk"
   ],
-  "homepage": "https://github.com/harry-uxd/nhsuk-prototype-kit-validation#readme",
+  "homepage": "https://github.com/NHSDigital/nhsuk-prototype-kit-validation#readme",
   "bugs": {
-    "url": "https://github.com/harry-uxd/nhsuk-prototype-kit-validation/issues"
+    "url": "https://github.com/NHSDigital/nhsuk-prototype-kit-validation/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harry-uxd/nhsuk-prototype-kit-validation.git"
+    "url": "git+https://github.com/NHSDigital/nhsuk-prototype-kit-validation.git"
   },
   "license": "MIT",
   "author": "harry-uxd",
